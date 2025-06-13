@@ -1,62 +1,71 @@
-const formatResponse = (data: any, eventId: string): string => {
-    try {
-        let formatted = `📅 Wisembly Event: ${eventId}\n`;
-        formatted += "=".repeat(50) + "\n\n";
-        
-        if (data?.id) {
-            formatted += `🆔 ID: ${data.id}\n`;
-        }
-        
-        if (data?.name || data?.title) {
-            formatted += `📌 Name: ${data?.name || data?.title}\n`;
-        }
-        
-        if (data.description) {
-            formatted += `📝 Description: ${data.description}\n`;
-        }
-        
-        if (data.status) {
-            formatted += `🎯 Status: ${data.status}\n`;
-        }
-        
-        if (data.startDate || data.date || data.start_date) {
-            const date = data.startDate || data.date || data.start_date;
-            formatted += `📅 Start Date: ${date}\n`;
-        }
-        
-        if (data.endDate || data.end_date) {
-            const date = data.endDate || data.end_date;
-            formatted += `🏁 End Date: ${date}\n`;
-        }
-        
-        if (data.location || data.venue) {
-            formatted += `📍 Location: ${data.location || data.venue}\n`;
-        }
-        
-        if (data.organizer || data.host) {
-            formatted += `👤 Organizer: ${data.organizer || data.host}\n`;
-        }
-        
-        if (data.participantCount || data.participants || data.attendees) {
-            const count = data.participantCount || data.participants || data.attendees;
-            formatted += `👥 Participants: ${typeof count === 'number' ? count : 'Unknown'}\n`;
-        }
-        
-        if (data.url || data.link) {
-            formatted += `🔗 URL: ${data.url || data.link}\n`;
-        }
-    
-        formatted += "\n" + "─".repeat(50) + "\n";
-        formatted += "📋 Complete API Response:\n\n";
-        formatted += "```json\n";
-        formatted += JSON.stringify(data, null, 2);
-        formatted += "\n```";
-    
-        return formatted;
-    } catch (error) {
-        console.error(`❌ Error formatting event data:`, error);
-        return `❌ Error formatting event "${eventId}" data: ${error}\n\n📋 Raw API Response:\n${JSON.stringify(data, null, 2)}`;
-    }
-}
+import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 
-export { formatResponse }
+/**
+ * Formats event data into a readable string format
+ * @param data - Raw event data from API
+ * @param eventId - Event identifier for header
+ * @returns Formatted string representation of the event
+ */
+const formatResponse = (data: unknown, eventId: string): string => {
+    try {
+      if (!data || typeof data !== 'object') {
+        return `Error formatting event "${eventId}" data: Invalid data format\n\nRaw API Response:\n${JSON.stringify(data, null, 2)}`;
+      }
+  
+      const eventData = data as Record<string, unknown>;
+      const lines: string[] = [];
+  
+      lines.push(`Wisembly Event: ${eventId}`);
+      lines.push('='.repeat(50));
+      lines.push('');
+  
+      for (const [key, value] of Object.entries(eventData)) {
+        if (value !== undefined && value !== null && value !== '') {
+          const formattedValue = typeof value === 'object' 
+            ? JSON.stringify(value) 
+            : String(value);
+          lines.push(`${key}: ${formattedValue}`);
+        }
+      }
+  
+      lines.push('');
+      lines.push('-'.repeat(50));
+      lines.push('Complete API Response:');
+      lines.push('');
+      lines.push(JSON.stringify(data, null, 2));
+  
+      return lines.join('\n');
+  
+    } catch (error) {
+      console.error(`Error formatting event data:`, error);
+      return `Error formatting event "${eventId}" data: ${error}\n\nRaw API Response:\n${JSON.stringify(data, null, 2)}`;
+    }
+};
+
+/**
+ * Creates a successful CallToolResult response
+ * @param text - The response text content
+ * @returns CallToolResult with success status
+ */
+const createSuccessResponse = (text: string): CallToolResult => ({
+  content: [{
+    type: "text" as const,
+    text
+  }],
+  isError: false
+} satisfies CallToolResult);
+
+/**
+ * Creates an error CallToolResult response
+ * @param text - The error text content
+ * @returns CallToolResult with error status
+ */
+const createErrorResponse = (text: string): CallToolResult => ({
+  content: [{
+    type: "text" as const,
+    text
+  }],
+  isError: true
+} satisfies CallToolResult);
+
+export { formatResponse, createSuccessResponse, createErrorResponse }

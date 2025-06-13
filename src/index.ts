@@ -1,21 +1,15 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { z } from "zod";
 import { getEvent } from "./tools/getEvent.js";
 
+// create server MCP
 const server = new McpServer({
   name: "wisembly-api-server",
   version: "1.0.0"
 });
 
-server.tool(
-  "get_wisembly_event",
-  "Fetch event data from the Wisembly API for any keyword",
-  {
-    keyword: z.string().describe("The keyword to search for in the Wisembly API")
-  },
-  async ({ keyword }) => await getEvent({ keyword })
-);
+// define tools
+getEvent(server);
 
 async function main() {
   try {
