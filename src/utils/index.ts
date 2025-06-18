@@ -1,7 +1,11 @@
-import { formatResponse, createSuccessResponse, createErrorResponse } from "./formatResponse.js";
+import { 
+  formatResponseEvent, 
+  createSuccessResponse, 
+  createErrorResponse } 
+from "./formatResponse.js";
 
 export {
-    formatResponse,
-    createSuccessResponse,
-    createErrorResponse
+  formatResponseEvent,
+  createSuccessResponse,
+  createErrorResponse
 }

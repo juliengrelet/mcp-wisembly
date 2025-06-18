@@ -8,23 +8,29 @@ import { WisemblyApiError } from "./errors/index.js";
  * @param params - Object containing the event keyword
  * @returns Promise resolving to CallToolResult with event data or error
  */
-const getEvent = async ({ keyword }: GetEvent): Promise<CallToolResult> => {
+const getSessions = async ({ keyword }: GetEvent): Promise<CallToolResult> => {
   try {
-    const url: string = `https://api-prp.wisembly.com/api/6/event/${encodeURIComponent(keyword)}`;
+    const url: string = `https://api-prp.wisembly.com/api/6/event/${encodeURIComponent(keyword)}/sessions`;
+
+    const headers: Record<string, string> = {
+      'Accept': 'application/vnd.api+json',
+      'Content-Type': 'application/vnd.api+json',
+    };
+
+    if (process.env.API_TOKEN) {
+      headers['Wisembly-Api-Key'] = process.env.API_TOKEN;
+    }
 
     const response: Response = await fetch(url, {
       method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      }
+      headers,
     });
 
     if (!response.ok) {
       const error: string = await response.text().catch((): string => 'Unknown error');
       
       throw new WisemblyApiError(
-        `Failed to fetch event "${keyword}"`,
+        `Failed to fetch sessions "${keyword}"`,
         response.status,
         response.statusText,
         error
@@ -48,11 +54,11 @@ const getEvent = async ({ keyword }: GetEvent): Promise<CallToolResult> => {
     
     return createSuccessResponse(formattedResponse);
   } catch (error: unknown) {
-    console.error(`❌ Error in get_wisembly_event:`, error);
+    console.error(`❌ Error in get_wisembly_sessions:`, error);
     
     if (error instanceof WisemblyApiError) {
       return createErrorResponse(
-        `❌ Wisembly API Error for event "${keyword}":\n\nHTTP ${error.status}: ${error.statusText}\n\nMessage: ${error.message}\n\nResponse: ${error.response || 'No additional details'}`
+        `❌ Wisembly API Error for sessions "${keyword}":\n\nHTTP ${error.status}: ${error.statusText}\n\nMessage: ${error.message}\n\nResponse: ${error.response || 'No additional details'}`
       );
     }
     
@@ -61,4 +67,4 @@ const getEvent = async ({ keyword }: GetEvent): Promise<CallToolResult> => {
   }
 };
 
-export { getEvent };
+export { getSessions };

@@ -1,6 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { getEvent } from "./tools/getEvent.js";
+import { getSessions } from "./tools/getSessions.js";
 
 // create server MCP
 const server = new McpServer({
@@ -10,6 +11,7 @@ const server = new McpServer({
 
 // define tools
 getEvent(server);
+getSessions(server);
 
 async function main() {
   try {

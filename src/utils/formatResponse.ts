@@ -6,7 +6,7 @@ import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
  * @param eventId - Event identifier for header
  * @returns Formatted string representation of the event
  */
-const formatResponse = (data: unknown, eventId: string): string => {
+const formatResponseEvent = (data: unknown, eventId: string): string => {
     try {
       if (!data || typeof data !== 'object') {
         return `Error formatting event "${eventId}" data: Invalid data format\n\nRaw API Response:\n${JSON.stringify(data, null, 2)}`;
@@ -68,4 +68,8 @@ const createErrorResponse = (text: string): CallToolResult => ({
   isError: true
 } satisfies CallToolResult);
 
-export { formatResponse, createSuccessResponse, createErrorResponse }
+export { 
+  formatResponseEvent, 
+  createSuccessResponse, 
+  createErrorResponse 
+}
