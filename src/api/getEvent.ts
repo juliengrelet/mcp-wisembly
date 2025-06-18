@@ -2,6 +2,7 @@ import { GetEvent } from "../interfaces/event.js";
 import { createErrorResponse, createSuccessResponse, formatResponseEvent } from "../utils/formatResponse.js";
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { WisemblyApiError } from "./errors/index.js";
+import { API_URL } from "../config.js";
 
 /**
  * Fetches event data from the Wisembly API
@@ -10,7 +11,7 @@ import { WisemblyApiError } from "./errors/index.js";
  */
 const getEvent = async ({ keyword }: GetEvent): Promise<CallToolResult> => {
   try {
-    const url: string = `https://api-prp.wisembly.com/api/6/event/${encodeURIComponent(keyword)}`;
+    const url: string = `${API_URL}/api/6/event/${encodeURIComponent(keyword)}`;
 
     const response: Response = await fetch(url, {
       method: 'GET',
