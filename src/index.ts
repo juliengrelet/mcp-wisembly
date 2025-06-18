@@ -1,9 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { getEvent } from "./tools/getEvent.js";
-import { getSessions } from "./tools/getSessions.js";
+import { getEvent, getSessions } from "./tools/index.js";
 
-// create server MCP
 const server = new McpServer({
   name: "wisembly-api-server",
   version: "1.0.0"

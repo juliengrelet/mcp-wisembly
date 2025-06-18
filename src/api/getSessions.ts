@@ -3,6 +3,7 @@ import { createErrorResponse, createSuccessResponse, formatResponseEvent } from 
 import { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
 import { WisemblyApiError } from "./errors/index.js";
 import { API_URL } from "../config.js";
+import fetch from "node-fetch";
 
 /**
  * Fetches event data from the Wisembly API
@@ -22,10 +23,7 @@ const getSessions = async ({ keyword }: GetEvent): Promise<CallToolResult> => {
       headers['Wisembly-Api-Key'] = process.env.API_TOKEN;
     }
 
-    const response: Response = await fetch(url, {
-      method: 'GET',
-      headers,
-    });
+    const response = await fetch(url, { method: 'GET', headers });
 
     if (!response.ok) {
       const error: string = await response.text().catch((): string => 'Unknown error');
@@ -39,7 +37,6 @@ const getSessions = async ({ keyword }: GetEvent): Promise<CallToolResult> => {
     }
 
     let data: unknown;
-
     try {
       data = await response.json();
     } catch {
